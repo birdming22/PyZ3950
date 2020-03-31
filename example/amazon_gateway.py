@@ -91,7 +91,7 @@ class Z3950Server(protocol.Protocol):
         self.ensure_init ()
         try:
             self.decode_ctx.feed (map (ord, data))
-        except asn1.BERError, val:
+        except asn1.BERError as val:
             self.handle_error (val)
             return
         while self.decode_ctx.val_count () > 0:
@@ -155,7 +155,7 @@ class Z3950Server(protocol.Protocol):
                 print("about to send")
 
                 self.send_PDU ('searchResponse', sresp)
-            except Exception, e:
+            except Exception as e:
                 print("Exception:", e)
                 raise
                 

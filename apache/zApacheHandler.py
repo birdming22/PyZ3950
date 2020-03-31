@@ -341,7 +341,7 @@ def connectionhandler(conn):
         handler = ZHandler(conn, logfile)
         handler.read()
 
-    except Exception, err:
+    except Exception as err:
         logfile.write("Major Failure:\n")
         traceback.print_exc(100, logfile)
         logfile.flush()

@@ -493,7 +493,7 @@ def lex(module=None,debug=0,optimize=0):
             if not optimize:
                 try:
                     c = re.compile(f.__doc__, re.VERBOSE)
-                except re.error,e:
+                except re.error as e:
                     print("%s:%d. Invalid regular expression for rule '%s'. %s" % (file,line,f.__name__,e))
                     error = 1
                     continue
@@ -528,7 +528,7 @@ def lex(module=None,debug=0,optimize=0):
                 continue
             try:
                 c = re.compile(r,re.VERBOSE)
-            except re.error,e:
+            except re.error as e:
                 print("lex: Invalid regular expression for rule '%s'. %s" % (name,e))
                 error = 1
                 continue
@@ -558,7 +558,7 @@ def lex(module=None,debug=0,optimize=0):
                 # callback function to carry out the action
                 lexer.lexindexfunc[i] = (None,f[2:])
 
-    except re.error,e:
+    except re.error as e:
         print("lex: Fatal error. Unable to compile regular expression rules. %s" % e)
         error = 1
     if error:

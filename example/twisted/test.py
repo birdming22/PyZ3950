@@ -40,9 +40,9 @@ class TestThread (Thread):
                     r = self.conn.search (q)
                     for rec in r:
                         self.consume (rec)
-            except zoom.Bib1Err, err:
+            except zoom.Bib1Err as err:
                 pass
-            except zoom.QuerySyntaxError, e:
+            except zoom.QuerySyntaxError as e:
                 print("e", e, "q", query_str)
 
             if self.count > 500:

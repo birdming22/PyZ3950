@@ -270,7 +270,7 @@ class Parser:
 #                                      if not tn:
 #                                          print("%s:%d. Rule %s doesn't set required attribute '%s'" % \
 #                                                (p.file,p.line,p.name,".".join(field)))
-#                      except TypeError,LookupError:
+#                      except (TypeError, LookupError):
 #                          print("Bad requires directive " % r)
 #                          pass
 
@@ -555,7 +555,7 @@ class Production:
         # Precompute list of productions immediately following
         try:
             p.lrafter = Prodnames[p.prod[n+1]]
-        except (IndexError,KeyError),e:
+        except (IndexError, KeyError) as e:
             p.lrafter = []
         try:
             p.lrbefore = p.prod[n-1]
@@ -1335,7 +1335,7 @@ def slr_parse_table():
                                 action[st,a] = j
                                 actionp[st,a] = p
                                 
-            except StandardError,e:
+            except StandardError as e:
                 raise YaccError, "Hosed in slr_parse_table", e
 
         # Print the actions associated with each terminal
@@ -1540,7 +1540,7 @@ del _lr_goto_items
             f.write("}\n");
         f.close()
 
-    except IOError,e:
+    except IOError as e:
         print("Unable to create '%s'" % filename)
         print(e)
         return
@@ -1557,7 +1557,7 @@ def lr_read_tables(module=tab_module):
         else:
             return 0
         
-    except (ImportError,AttributeError):
+    except (ImportError, AttributeError):
         return 0
 
 # -----------------------------------------------------------------------------
@@ -1736,7 +1736,7 @@ def yacc(method=default_lr, debug=yaccdebug, module=None, tabmodule=tab_module, 
                 f.write("\n\n")
                 f.write(_vf.getvalue())
                 f.close()
-            except IOError,e:
+            except IOError as e:
                 print("yacc: can't create '%s'" % debug_file,e)
         
     # Made it here.   Create a parser object and set up its internal state.

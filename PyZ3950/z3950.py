@@ -145,7 +145,7 @@ def get_formatter (oid):
             else:
                 try:
                     print(x.encode (out_encoding))
-                except UnicodeError, u:
+                except UnicodeError as u:
                     print("Cannot print %s in current encoding %s" % (
                         repr (x), out_encoding))
     if oid == Z3950_RECSYN_SUTRS_ov:
@@ -158,7 +158,7 @@ def get_formatter (oid):
 def disp_resp (resp):
     try:
         (fmtoid, recs) = extract_recs (resp)
-    except ProtocolError, val:
+    except ProtocolError as val:
         print("Bad records", str (val))
     formatter = get_formatter (fmtoid)
     for rec in recs:
@@ -205,7 +205,7 @@ class Conn:
             raise self.ConnectionError ('disconnected')
         try:
             b = self.sock.recv (self.rdsz)
-        except socket.error, val:
+        except socket.error as val:
             self.sock = None
             raise self.ConnectionError ('socket', str (val))
         if len (b) == 0: # graceful close
@@ -221,7 +221,7 @@ class Conn:
             try:
                 b = self.readproc ()
                 self.decode_ctx.feed (map (ord, b))
-            except asn1.BERError, val:
+            except asn1.BERError as val:
                 raise self.ProtocolError ('ASN1 BER', str(val))
 
 
@@ -364,7 +364,7 @@ class Server (Conn):
             if charset_name != None:
                 try:
                     codecs.lookup (charset_name)
-                except LookupError, l:
+                except LookupError as l:
                     charset_name = None
             csresp = CharsetNegotResp (
                 charset_name,
@@ -467,7 +467,7 @@ class Client (Conn):
                        UnexpectedCloseError = UnexpectedCloseError)
         try:
             self.sock.connect ((addr, port))
-        except socket.error, val:
+        except socket.error as val:
             self.sock = None
             raise self.ConnectionError ('socket', str(val))
         try_v3 =  Z3950_VERS == 3
@@ -536,7 +536,7 @@ class Client (Conn):
             raise self.ConnectionError ('disconnected')
         try:
             self.sock.send (b)
-        except socket.error, val:
+        except socket.error as val:
             self.sock = None
             raise self.ConnectionError('socket', str(val))
 

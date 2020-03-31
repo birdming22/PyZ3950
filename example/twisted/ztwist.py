@@ -33,7 +33,7 @@ class AttribXlate(ErrRaiser):
             if qval.attributeSet != self.oid:
                 self.raise_err (123, str (qval.attributeSet), self.eb)
             return self.translate_rpn (qval.rpn)
-        except zoom.Bib1Err, e:
+        except zoom.Bib1Err as e:
             return None
     def translate_attr (self, attrs):
         """Checks attributes, and translates them to whatever the term_xlate
@@ -91,7 +91,7 @@ class Z3950Server(protocol.Protocol, ErrRaiser):
     def dataReceived (self, data):
         try:
             self.decode_ctx.feed (map (ord, data))
-        except asn1.BERError, val:
+        except asn1.BERError as val:
             self.handle_error (val)
             return
         while self.decode_ctx.val_count () > 0:
@@ -169,7 +169,7 @@ class Z3950Server(protocol.Protocol, ErrRaiser):
             searcher = self.get_searcher (sreq.databaseNames, eb)
             if searcher != None:
                 searcher.search (sreq.query, cb, eb)
-        except zoom.Bib1Err, e:
+        except zoom.Bib1Err as e:
             pass
 
 

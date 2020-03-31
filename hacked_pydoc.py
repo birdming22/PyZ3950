@@ -1329,7 +1329,7 @@ def doc(thing, title="Python Library Documentation: %s", forceload=0):
     if type(thing) is type(''):
         try:
             object = locate(thing, forceload)
-        except ErrorDuringImport, value:
+        except ErrorDuringImport as value:
             print(value)
             return
         if not object:
@@ -1350,7 +1350,7 @@ def writedoc(key, forceload=0):
     """Write HTML documentation to a file in the current directory."""
     try:
         object = locate(key, forceload)
-    except ErrorDuringImport, value:
+    except ErrorDuringImport as value:
         print(value)
     else:
         if object:
@@ -1790,7 +1790,7 @@ def serve(port, callback=None, completer=None):
             if path and path != '.':
                 try:
                     obj = locate(path, forceload=1)
-                except ErrorDuringImport, value:
+                except ErrorDuringImport as value:
                     self.send_document(path, html.escape(str(value)))
                     return
                 if obj:
@@ -2081,7 +2081,7 @@ def cli():
                         writedoc(arg)
                 else:
                     doc(arg)
-            except ErrorDuringImport, value:
+            except ErrorDuringImport as value:
                 print(value)
 
     except (getopt.error, BadUsage):
