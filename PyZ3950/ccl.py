@@ -357,7 +357,7 @@ if __name__ == '__main__':
     #    testfn = testlex
     testfn ('attrset (BIB1/ au="Gaiman, Neil" or ti=Sandman)')
     while 1:
-        s = raw_input ('Query: ')
+        s = input('Query: ')
         if len (s) == 0:
             break
         testfn (s)

@@ -960,7 +960,7 @@ if __name__ == '__main__':
 
     if query == '':
         while 1:
-            q_str = raw_input ('CCL query: ')
+            q_str = input('CCL query: ')
             if q_str == '': break
             run_one (q_str)
     else:

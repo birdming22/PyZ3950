@@ -101,7 +101,7 @@ class Zthes:
 def run ():
     zth = Zthes ('dbiref.kub.nl', 1800, 'jel')
     while 1:
-        term = raw_input ('Query: ')
+        term = input('Query: ')
         if not term:
             break
         l1 =  zth.lookup (term)

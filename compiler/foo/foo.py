@@ -1081,7 +1081,7 @@ if __name__ == '__main__':
     testfn = testyacc
     if len (sys.argv) == 1:
         while 1:
-            s = raw_input ('Query: ')
+            s = input('Query: ')
             if len (s) == 0:
                 break
             testfn (s)
