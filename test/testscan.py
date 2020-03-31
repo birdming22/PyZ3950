@@ -10,7 +10,7 @@ def run ():
     conn.numberOfEntries = 80
     ss = conn.scan (q)
     for i in range (len (ss)):
-        print ss.get_term (i), ss.get_fields (i)
+        print(ss.get_term (i), ss.get_fields (i))
 
 if __name__ == '__main__':
     run ()

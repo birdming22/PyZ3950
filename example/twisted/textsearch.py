@@ -30,13 +30,13 @@ class RegExpAttribXlate (ztwist.AttribXlate):
 
     def translate (self, query):
         regexp = ztwist.AttribXlate.translate (self, query)
-#        print "regexp", regexp
+#        print("regexp", regexp)
         if regexp == None:
             return None
         return re.compile (regexp)
     
     def term_xlate (self, aval, term):
-        if aval <> 1016: # USE attribute 'generic'
+        if aval != 1016: # USE attribute 'generic'
             self.raise_err (114, str (aval), self.eb)
         return "(%s)" % (term,)
     def combiner (self, operator, r1, r2):
@@ -63,7 +63,7 @@ class TextSearcher(ztwist.ErrRaiser):
         else:
             TextSearcher.real_search (*args, **kw)
     def check_match (self, line):
-        return None <> self.re_comp.search (line)
+        return None != self.re_comp.search (line)
     def translate_query (self, query, eb):
         self.re_comp = RegExpAttribXlate (eb).translate (query)
         if self.re_comp == None:

@@ -193,7 +193,7 @@ def t_NEWLINE(t):
 
 
 def t_error(t):
-    print "Error", t.value[:100]
+    print("Error", t.value[:100])
     raise LexError
 
     
@@ -353,7 +353,7 @@ def p_assign (t):
 
 def p_type_assign (t):
     'type_assign : type_ref GETS type'
-    print "type_assign", t[3], t[1]
+    print("type_assign", t[3], t[1])
     t[0] = Node ('type', [t[3]], t[1])
 
 def p_type (t): # XXX ignore DefinedMacroType
@@ -512,7 +512,7 @@ def p_element_type_3 (t):
 
 def p_sequenceof_type (t):
     'sequenceof_type : SEQUENCE OF type'
-    print "seq_of:", t[3]
+    print("seq_of:", t[3])
     t[0] = Node ('seq_of', [], t[3])
 
 def p_set_type (t):
@@ -914,7 +914,7 @@ def p_name_and_number_form_2 (t):
 #def p_identifier_1 (t):
 #    '''identifier : UCASE_IDENT
 #    | LCASE_IDENT'''
-#    print "identifier:", t[1]
+#    print("identifier:", t[1])
 #    t[0] = t[1]
 
 def p_identifier_2 (t): # XXX!!!
@@ -1061,19 +1061,19 @@ def testlex (s):
         token = lexer.token ()
         if not token:
             break
-        print token
+        print(token)
             
 def testyacc (s):
     ast = yacc.parse (s)
     assert (ast.type == 'module')
-    print "ast:", ast
+    print("ast:", ast)
 #    body = ast.children[0]
-#    print "module name:", ast.leaf
+#    print("module name:", ast.leaf)
 #    assignlist = body.children[0]
 #    for a in assignlist:
-#        print "assign:", a
+#        print("assign:", a)
 
-#    print "AST:", ast
+#    print("AST:", ast)
 
 import sys
 if __name__ == '__main__':

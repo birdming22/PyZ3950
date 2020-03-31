@@ -36,7 +36,7 @@ class Node:
         return " ".join (map (str, self.__dict__.items ()))
         
 def xmlparse (s):
-    print s
+    print(s)
     raise "XML not currently implemented"
     # see below for why this isn't implemented
 
@@ -92,7 +92,7 @@ class Zthes:
         for r in res:
             parser = parsedict.get (r.syntax, None)
             if parser == None:
-                print "Unknown syntax:", r.syntax, "for", r.data
+                print("Unknown syntax:", r.syntax, "for", r.data)
                 continue
 
             l += parser (r.data)
@@ -106,10 +106,10 @@ def run ():
             break
         l1 =  zth.lookup (term)
         for (n, l2) in l1:
-            print "Term", n.typ, n.name
+            print("Term", n.typ, n.name)
             for e in l2:
-                print "  ", e.typ, e.name
-            print "---"
+                print("  ", e.typ, e.name)
+            print("---")
             
 if __name__ == '__main__':
     run ()

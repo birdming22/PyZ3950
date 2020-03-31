@@ -14,8 +14,8 @@ query2 = zoom.Query ('CCL', 'au=Pynchon, Thomas')
 res2 = conn.search (query2)
 for i in range (0, max (len (res1), len (res2))):
     if i < len (res1):
-        print "1:", res1[i]
+        print("1:", res1[i])
     if i < len (res2):
-        print "2:", res2[i]
+        print("2:", res2[i])
 conn.close ()
 

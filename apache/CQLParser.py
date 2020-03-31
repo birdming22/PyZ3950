@@ -132,7 +132,7 @@ class CQLshlex(shlex):
             if nextchar == '\n':
                 self.lineno = self.lineno + 1
             if self.debug >= 3:
-                print "shlex: in state", repr(self.state),  "I see character:", repr(nextchar), "self.quotes: ", repr(self.quotes)
+                print("shlex: in state", repr(self.state),  "I see character:", repr(nextchar), "self.quotes: ", repr(self.quotes))
 
             if self.state is None:
                 self.token = ''        # past end of file
@@ -143,7 +143,7 @@ class CQLshlex(shlex):
                     break
                 elif nextchar in self.whitespace:
                     if self.debug >= 2:
-                        print "shlex: I see whitespace in whitespace state"
+                        print("shlex: I see whitespace in whitespace state")
                     if self.token:
                         break   # emit current token
                     else:
@@ -201,7 +201,7 @@ class CQLshlex(shlex):
                     break
                 elif not nextchar:      # end of file
                     if self.debug >= 2:
-                        print "shlex: I see EOF in quotes state"
+                        print("shlex: I see EOF in quotes state")
                     # Override SHLEX's ValueError to throw diagnostic
                     diag = Diagnostic14()
                     diag.details = self.token[:-1]
@@ -212,7 +212,7 @@ class CQLshlex(shlex):
                     break
                 elif nextchar in self.whitespace:
                     if self.debug >= 2:
-                        print "shlex: I see whitespace in word state"
+                        print("shlex: I see whitespace in word state")
                     self.state = ' '
                     if self.token:
                         break   # emit current token
@@ -230,7 +230,7 @@ class CQLshlex(shlex):
                 else:
                     self.pushback = [nextchar] + self.pushback
                     if self.debug >= 2:
-                        print "shlex: I see punctuation in word state"
+                        print("shlex: I see punctuation in word state")
                     self.state = ' '
                     if self.token:
                         break   # emit current token
@@ -240,9 +240,9 @@ class CQLshlex(shlex):
         self.token = ''
         if self.debug > 1:
             if result:
-                print "shlex: raw token=" + `result`
+                print("shlex: raw token=" + "result")
             else:
-                print "shlex: raw token=EOF"
+                print("shlex: raw token=EOF")
         return result
 
 
@@ -1172,13 +1172,13 @@ if (__name__ == "__main__"):
     import sys;
     s = sys.stdin.readline()
     try:
-        q = parse(s);
+        q = parse(s)
     except SRWDiagnostic, diag:
         # Print a full version, not just str()
-        print "Diagnostic Generated."
-        print "  Code:        " + str(diag.code)
-        print "  Details:     " + str(diag.details)
-        print "  Description: " + diag.description
+        print("Diagnostic Generated.")
+        print("  Code:        " + str(diag.code))
+        print("  Details:     " + str(diag.details))
+        print("  Description: " + diag.description)
     else:
-        print q.toXCQL()[:-1];
+        print(q.toXCQL()[:-1])
     

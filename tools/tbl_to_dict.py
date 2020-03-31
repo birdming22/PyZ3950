@@ -22,7 +22,7 @@ class MyParser(htmllib.HTMLParser):
         if len (self.lst) ==  3:
             self.strlst.append ("%s: '%s', # %s" % (self.lst [0], self.lst[1], self.lst[2]))
         else:
-            print "# Bad len lst:", str (self.lst)
+            print("# Bad len lst:", str (self.lst))
         self.lst = []
     def start_tr (self, attrs):
         self.flush () # needed
@@ -39,9 +39,9 @@ if __name__ == '__main__':
     p = MyParser (form)
     p.feed (fil.read ())
     p.close ()
-    print "bib1_msg_dict = {"
-    print ",\n".join (p.strlst)
-    print "}"
+    print("bib1_msg_dict = {")
+    print(",\n".join (p.strlst))
+    print("}")
 
     
     

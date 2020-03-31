@@ -32,7 +32,7 @@ class TestThread (Thread):
         while 1:
             self.count += 1
 #            if not (self.count % 100):
-#                print "Thread", currentThread (), "Count", self.count
+#                print("Thread", currentThread (), "Count", self.count)
             query_str = random.choice (self.queries)
             try:
                 q = zoom.Query ('CCL', query_str)
@@ -43,7 +43,7 @@ class TestThread (Thread):
             except zoom.Bib1Err, err:
                 pass
             except zoom.QuerySyntaxError, e:
-                print "e", e, "q", query_str
+                print("e", e, "q", query_str)
 
             if self.count > 500:
                 if not parse_only:
@@ -70,8 +70,8 @@ if __name__ == '__main__':
     
     end_t = time.time ()
     elapsed = end_t - start_t
-    print "total", total_count, "elapsed", elapsed
-    print "rate", total_count * 1.0 / elapsed
+    print("total", total_count, "elapsed", elapsed)
+    print("rate", total_count * 1.0 / elapsed)
     
         
         

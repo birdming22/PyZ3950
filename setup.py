@@ -30,7 +30,7 @@ class PLYBuild(build_ext):
     def run(self):
         for ext in self.extensions:
             nm =  self.get_ext_fullname (ext.sources[0])
-#            print "running %s to generate parsing tables" % (nm,)
+#            print("running %s to generate parsing tables" % (nm,))
 #
 #            mod = __import__ (os.path.join (pyz_dir,nm))
 

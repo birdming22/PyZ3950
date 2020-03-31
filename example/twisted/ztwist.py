@@ -85,7 +85,7 @@ class Z3950Server(protocol.Protocol, ErrRaiser):
     def connectionLost (self, reason):
         self.transport.loseConnection ()
         if not self.closed:
-            print "lost conn for reason", reason
+            print("lost conn for reason", reason)
     def handle_error (self, errobj):
         raise errobj
     def dataReceived (self, data):

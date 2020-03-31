@@ -28,7 +28,7 @@ class Visitor:
     def finish (self):
         self.output_assignments ()
         self.output_pyquotes ()
-        print self.text
+        print(self.text)
     def spaces (self):
         return " " * (4 * self.indent_lev)
     def indent (self):
@@ -185,7 +185,7 @@ class Visitor:
             return (",\n%s"% self.spaces ()).join (slist)
 
         mainstr = visit_list (node.elt_list)
-        if node.ext_list <> None:
+        if node.ext_list != None:
             extstr = visit_list (node.ext_list)
         else:
             extstr = None
@@ -222,7 +222,7 @@ class Visitor:
         self.output ("('%s',%s,%s,%d)" % (identstr, tagstr,typstr, optflag))
     def visitNamedType (self, node):
         typstr = self.visit_saving (node.typ)
-        if node.ident <> None:
+        if node.ident != None:
             identstr = node.ident
         else:
             if hasattr (node.typ, 'val'):
@@ -245,9 +245,9 @@ class Visitor:
 def parse_and_output (s, fn, defined_dict):
     ast = compiler.yacc.parse (s)
     time_str = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
-    print """#!/usr/bin/env python
+    print("""#!/usr/bin/env python
 # Auto-generated from %s at %s
-from PyZ3950 import asn1""" % (fn, time_str)
+from PyZ3950 import asn1""" % (fn, time_str))
     for module in ast:
         assert (module.type == 'Module')
         visit_instance = Visitor (defined_dict, fn)

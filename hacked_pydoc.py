@@ -37,7 +37,7 @@ Tommy Burnette, the original creator of manpy.
 Paul Prescod, for all his work on onlinehelp.
 Richard Chamberlain, for the first implementation of textdoc.
 
-Mynd you, møøse bites Kan be pretty nasti..."""
+Mynd you, mï¿½ï¿½se bites Kan be pretty nasti..."""
 
 # Known bugs that can't be fixed here:
 #   - imp.load_module() cannot be prevented from clobbering existing
@@ -1323,17 +1323,17 @@ def locate(path, forceload=0):
 text = TextDoc()
 html = HTMLDoc()
 
-def doc(thing, title='Python Library Documentation: %s', forceload=0):
+def doc(thing, title="Python Library Documentation: %s", forceload=0):
     """Display text documentation, given an object or a path to an object."""
     suffix, name = '', None
     if type(thing) is type(''):
         try:
             object = locate(thing, forceload)
         except ErrorDuringImport, value:
-            print value
+            print(value)
             return
         if not object:
-            print 'no Python documentation found for %s' % repr(thing)
+            print("no Python documentation found for %s" % repr(thing))
             return
         parts = split(thing, '.')
         if len(parts) > 1: suffix = ' in ' + join(parts[:-1], '.')
@@ -1351,7 +1351,7 @@ def writedoc(key, forceload=0):
     try:
         object = locate(key, forceload)
     except ErrorDuringImport, value:
-        print value
+        print(value)
     else:
         if object:
             page = html.page(describe(object),
@@ -1359,9 +1359,9 @@ def writedoc(key, forceload=0):
             file = open(key + '.html', 'w')
             file.write(page)
             file.close()
-            print 'wrote', key + '.html'
+            print('wrote', key + '.html')
         else:
-            print 'no Python documentation found for %s' % repr(key)
+            print('no Python documentation found for %s' % repr(key))
 
 def writedocs(dir, pkgpath='', done=None):
     """Write out HTML documentation for all modules in a directory tree."""
@@ -1753,7 +1753,7 @@ def apropos(key):
     def callback(path, modname, desc):
         if modname[-9:] == '.__init__':
             modname = modname[:-9] + ' (package)'
-        print modname, desc and '- ' + desc
+        print(modname, desc and '- ' + desc)
     try: import warnings
     except ImportError: pass
     else: warnings.filterwarnings('ignore') # ignore problems during import
@@ -2061,9 +2061,9 @@ def cli():
                 except ValueError:
                     raise BadUsage
                 def ready(server):
-                    print 'pydoc server ready at %s' % server.url
+                    print('pydoc server ready at %s' % server.url)
                 def stopped():
-                    print 'pydoc server stopped'
+                    print('pydoc server stopped')
                 serve(port, ready, stopped)
                 return
             if opt == '-w':
@@ -2082,11 +2082,11 @@ def cli():
                 else:
                     doc(arg)
             except ErrorDuringImport, value:
-                print value
+                print(value)
 
     except (getopt.error, BadUsage):
         cmd = sys.argv[0]
-        print """pydoc - the Python documentation tool
+        print("""pydoc - the Python documentation tool
 
 %s <name> ...
     Show text documentation on something.  <name> may be the name of a
@@ -2107,6 +2107,6 @@ def cli():
     Write out the HTML documentation for a module to a file in the current
     directory.  If <name> contains a '%s', it is treated as a filename; if
     it names a directory, documentation is written for all the contents.
-""" % (cmd, os.sep, cmd, cmd, cmd, cmd, os.sep)
+""" % (cmd, os.sep, cmd, cmd, cmd, cmd, os.sep))
 
 if __name__ == '__main__': cli()

@@ -15,7 +15,7 @@ class Explainer:
     def run_query (self, qstr):
         query = zoom.Query ('CCL',qstr)
         res = conn.search (query)
-        print qstr
+        print(qstr)
         self.disp_res (res)
         return res
     def run (self):
@@ -35,13 +35,13 @@ class Explainer:
                      'processinginfo', 'variantsetinfo', 'unitinfo']:
             if self.categories.has_key (info):
                 def report_unsupp ():
-                    print "client does not support", info
+                    print("client does not support", info)
                 fn = getattr (self, 'run_' + info, lambda: report_unsupp ())
-                print " *** %s *** " % info
+                print(" *** %s *** " % info)
                 fn ()
 
             else:
-                print "server does not support", info
+                print("server does not support", info)
 
     def run_sortdetails (self):
         for db in self.databases.keys ():
@@ -84,7 +84,7 @@ class Explainer:
         
     def disp_res (self, res):
         for r in res:
-            print r
+            print(r)
                            
 
 if __name__ == '__main__':

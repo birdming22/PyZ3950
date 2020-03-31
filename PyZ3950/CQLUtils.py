@@ -478,7 +478,7 @@ class CIndex(Index):
                 # complex attribute for bib1
                 val = self.value
         else:
-            print "Can't resolve %s" % pf
+            print("Can't resolve %s" % pf)
             raise(ValueError)
             
         return {(set, 1) :  val}
