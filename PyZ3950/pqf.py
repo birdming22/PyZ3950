@@ -104,7 +104,7 @@ class PQFParser:
         elif (self.currentToken == "{"):
             # Parens
             s = self.query_struct()
-            if (self.nextToken <> "}"):
+            if (self.nextToken != "}"):
                 raise(ValueError)
             else:
                 self.fetch_token()

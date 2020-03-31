@@ -285,7 +285,7 @@ class Connection(_AttrCheck, _ErrHdlr):
         # cached but not-yet-accessed data is probably an error, but
         # a not-yet-caught error.)
         
-        if self._cli <> None and self._cli.sock <> None:
+        if self._cli != None and self._cli.sock != None:
             return
         
         initkw = {}
@@ -386,7 +386,7 @@ class Connection(_AttrCheck, _ErrHdlr):
                 zk.missingValueAction = ('missingValueData', k.missingValueData)
             value = k.sequence
             if (k.type == 'accessPoint'):
-                if (value.typ <> 'RPN'):
+                if (value.typ != 'RPN'):
                     raise ValueError # XXX
                 l = z3950.SortKey['sortAttributes']()
                 l.id = value.query[1].attributeSet
@@ -590,7 +590,7 @@ class ResultSet(_AttrCheck, _ErrHdlr):
             raise ConnectionError ('Stale result set used')
         # XXX is this right?
         if (not self._conn.namedResultSets) and \
-           self._ctr <> self._conn._resultSetCtr:
+           self._ctr != self._conn._resultSetCtr:
             raise ServerNotImplError ('Multiple Result Sets')
         # XXX or this?
     
@@ -619,7 +619,7 @@ class ResultSet(_AttrCheck, _ErrHdlr):
             # range (lbound, lbound + count).  If so, try
             # retrieving just one record. XXX could try
             # retrieving more, up to next cache bdary.
-            if i <> lbound and self._get_rec (i) == None:
+            if i != lbound and self._get_rec (i) == None:
                 presentResp  = self._conn._cli.present (
                     start = i + 1,
                     count = 1,
@@ -628,7 +628,7 @@ class ResultSet(_AttrCheck, _ErrHdlr):
                 self._extract_recs (presentResp.records, i)
         rec = self._records [self.preferredRecordSyntax][
             self.elementSetName][i]
-        if rec <> None and rec.is_surrogate_diag ():
+        if rec != None and rec.is_surrogate_diag ():
             rec.raise_exn ()
     def __getitem__ (self, i):
         """Ensure item is present, and return a Record"""
@@ -660,7 +660,7 @@ class ResultSet(_AttrCheck, _ErrHdlr):
             # ignoring all but first error.
             diagRec = recs [0]
             self.err_diagrec (diagRec)
-        if (typ <> 'responseRecords'):
+        if (typ != 'responseRecords'):
             raise ProtocolError ("Bad records typ " + str (typ) + str (recs))
         for i,r in my_enumerate (recs):
             r = recs [i]
@@ -674,7 +674,7 @@ class ResultSet(_AttrCheck, _ErrHdlr):
                 dat = data.encoding
                 (typ, dat) = dat
                 if (oid == oids.Z3950_RECSYN_USMARC_ov):
-                    if typ <> 'octet-aligned':
+                    if typ != 'octet-aligned':
                         raise ProtocolError (
                             "Weird record EXTERNAL MARC type: " + typ)
                 rec = Record (oid, dat, dbname)
@@ -775,7 +775,7 @@ def render_OPAC (opac_data):
                 s_list = []
                 if isinstance (item, asn1.StructBase):
                     for attr, val in item.__dict__.items ():
-                        if attr [0] <> '_':
+                        if attr [0] != '_':
                             s_list.append ("%s%s: %s" % (
                                 "\t" * level, attr, "\n".join(render (val, level + 1))))
                 elif (isinstance (item, type ([])) and len (item) > 0
@@ -883,7 +883,7 @@ class ScanSet (_AttrCheck, _ErrHdlr):
         d = {}
         for k,v in self.zoom_to_z3950.items ():
             val = getattr (r, v, None)
-            if val <> None:
+            if val != None:
                 d[k] = val
         d["term"] = self.get_term (i)
         return d
@@ -943,7 +943,7 @@ if __name__ == '__main__':
                 for syn in fmts:
                     print("Syntax", syn, "Esn", esn)
                     res.preferredRecordSyntax = syn
-                    if esn <> 'NONE':
+                    if esn != 'NONE':
                         res.elementSetName = esn
                     try:
                         for r in res:

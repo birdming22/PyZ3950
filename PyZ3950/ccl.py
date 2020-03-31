@@ -210,7 +210,7 @@ def xlate_qualifier (x):
 
 def p_elements_2 (t):
     'elements : SET RELOP WORD'
-    if t[2] <> '=':
+    if t[2] != '=':
         raise QuerySyntaxError (str (t[1], str (t[2]), str (t[3])))
     t[0] = Node ('set', leaf = t[3])
 
@@ -295,7 +295,7 @@ def tree_to_q (ast):
                                            attributeValue = val)
         apt  = z3950.AttributesPlusTerm ()
         quallist = ast.children.quallist
-        if ast.leaf <> '=':
+        if ast.leaf != '=':
             quallist.append ((2,relattr)) # 2 is relation attribute
             # see http://www.loc.gov/z3950/agency/markup/13.html ATR.1.1
         apt.attributes = map (make_aelt, quallist)

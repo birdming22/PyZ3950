@@ -105,7 +105,7 @@ Z3950_VERS = 3 # This is a global switch: do we support V3 at all?
 
 def extract_recs (resp):
     (typ, recs) = resp.records
-    if (typ <> 'responseRecords'):
+    if (typ != 'responseRecords'):
         raise ProtocolError ("Bad records typ " + str (typ) + str (recs))
     if len (recs) == 0:
         raise ProtocolError ("No records")
@@ -113,19 +113,19 @@ def extract_recs (resp):
     extract = []
     for r in recs:
         (typ, data) = r.record
-        if (typ <> 'retrievalRecord'):
+        if (typ != 'retrievalRecord'):
             raise ProtocolError ("Bad typ %s data %s" % (str (typ), str(data)))
         oid = data.direct_reference
         if fmtoid == None:
             fmtoid = oid
-        elif fmtoid <> oid:
+        elif fmtoid != oid:
             raise ProtocolError (
                 "Differing OIDs %s %s" % (str (fmtoid), str (oid)))
         # Not, strictly speaking, an error.
         dat = data.encoding
         (typ, dat) = dat
         if (oid == Z3950_RECSYN_USMARC_ov):
-            if typ <> 'octet-aligned':
+            if typ != 'octet-aligned':
                 raise ProtocolError ("Weird record EXTERNAL MARC type: " + typ)
         extract.append (dat)
     return (fmtoid, extract)
@@ -189,7 +189,7 @@ class Conn:
         strip_bom = self.charset_name == 'utf-16'
         # XXX should create a new codec which wraps utf-16 but
         # strips the Byte Order Mark, or use stream codecs
-        if self.charset_name <> None:
+        if self.charset_name != None:
             self.encode_ctx.set_codec (asn1.GeneralString,
                                        codecs.lookup (self.charset_name),
                                        strip_bom)
@@ -239,7 +239,7 @@ class Server (Conn):
             fn = self.fn_dict.get (typ, None)
             if fn == None:
                 raise self.ProtocolError ("Bad typ", typ + " " + str (val))
-            if typ <> 'initRequest' and self.expecting_init:
+            if typ != 'initRequest' and self.expecting_init:
                 raise self.ProtocolError ("Init expected", typ)
             fn (self, val)
     def send (self, val):
@@ -353,7 +353,7 @@ class Server (Conn):
         val = get_charset_negot (ireq)
         charset_name = None
         records_in_charsets = 0
-        if val <> None:
+        if val != None:
             csreq = CharsetNegotReq ()
             csreq.unpack_proposal (val)
             def rand_choose (list_or_none):
@@ -361,7 +361,7 @@ class Server (Conn):
                     return None
                 return random.choice (list_or_none)
             charset_name = rand_choose (csreq.charset_list)
-            if charset_name <> None:
+            if charset_name != None:
                 try:
                     codecs.lookup (charset_name)
                 except LookupError, l:
@@ -509,7 +509,7 @@ class Client (Conn):
             print("Initialize Response", self.initresp)
         self.v3_flag = self.initresp.protocolVersion ['version_3']
         val = get_charset_negot (self.initresp)
-        if val <> None:
+        if val != None:
             csr = CharsetNegotResp ()
             csr.unpack_negot_resp (val)
             if trace_charset:
@@ -549,7 +549,7 @@ class Client (Conn):
             b = self.encode_ctx.encode (APDU, (arm, val))
             self.decode_ctx.feed (b)
             redecoded = self.read_PDU ()
-            if redecoded <> (arm, val):
+            if redecoded != (arm, val):
                 print("Redecoded", redecoded)
                 print("old", (arm, val))
                 assert (redecoded == (arm, val))
@@ -623,7 +623,7 @@ class Client (Conn):
         preq.resultSetStartPoint = start
         preq.numberOfRecordsRequested = count
         preq.preferredRecordSyntax = recsyn
-        if esn <> None:
+        if esn != None:
             preq.recordComposition = ('simple', esn)
         return self.transact (('presentRequest', preq), 'presentResponse')
     def scan (self, query, **kw):
@@ -645,7 +645,7 @@ class Client (Conn):
             rv =  self.transact (('close', close), 'close')
         except self.ConnectionError:
             rv = None
-        if self.sock <> None:
+        if self.sock != None:
             self.sock.close ()
             self.sock = None
         return rv

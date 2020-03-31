@@ -71,9 +71,9 @@ class PrefixableObject:
             return reservedPrefixes[name]
         elif (self.prefixes.has_key(name)):
             return self.prefixes[name]
-        elif (self.parent <> None):
+        elif (self.parent != None):
             return self.parent.resolvePrefix(name)
-        elif (self.config <> None):
+        elif (self.config != None):
             # Config is some sort of server config which specifies defaults
             return self.config.resolvePrefix(name)
         else:
@@ -177,7 +177,7 @@ class Triple (PrefixableObject):
         txt = []
         if (self.prefixes):
             for p in self.prefixes.keys():
-                if (p <> ''):
+                if (p != ''):
                     txt.append('>%s="%s"' % (p, self.prefixes[p]))
                 else:
                     txt.append('>"%s"' % (self.prefixes[p]))
@@ -253,7 +253,7 @@ class SearchClause (PrefixableObject):
     def toCQL(self):
         text = []
         for p in self.prefixes.keys():
-            if (p <> ''):
+            if (p != ''):
                 text.append('>%s="%s"' % (p, self.prefixes[p]))
             else:
                 text.append('>"%s"' % (self.prefixes[p]))
@@ -317,7 +317,7 @@ class Relation(PrefixedObject, ModifiableObject):
 class Term:
     value = ""
     def __init__(self, v):
-        if (v <> ""):
+        if (v != ""):
             # Unquoted literal
             if v in ['>=', '<=', '>', '<', '<>', "/", '=']:
                 diag = Diagnostic25()

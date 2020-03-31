@@ -28,9 +28,9 @@ class AttribXlate(ErrRaiser):
     def translate (self, query):
         try:
             (qtyp, qval) = query
-            if qtyp <> 'type_1':
+            if qtyp != 'type_1':
                 self.raise_err (107, qtyp, self.eb)
-            if qval.attributeSet <> self.oid:
+            if qval.attributeSet != self.oid:
                 self.raise_err (123, str (qval.attributeSet), self.eb)
             return self.translate_rpn (qval.rpn)
         except zoom.Bib1Err, e:
@@ -43,17 +43,17 @@ class AttribXlate(ErrRaiser):
         if (len (attrs) > 1 or
             (getattr (attrs[0],'attributeSet',self.oid) != self.oid)):
             self.raise_err (1024, str (attrs), self.eb)
-        if attrs [0].attributeType <> 1: # use attribute
+        if attrs [0].attributeType != 1: # use attribute
             self.raise_err (116, str (attrs), self.eb) # or 117-120
         (atyp, aval) = attrs[0].attributeValue
-        if atyp <> 'numeric':
+        if atyp != 'numeric':
             self.raise_err (113, str (attrs), self.eb)
         return aval
     def translate_term (self, term):
         """Translates term to whatever the term_xlate callback expects.
         Override this to handle term types other than 'general'."""
         (ttyp, tval) = term
-        if ttyp <> 'general':
+        if ttyp != 'general':
             self.raise_err (229, str (term), self.eb)
         return tval
         
@@ -167,7 +167,7 @@ class Z3950Server(protocol.Protocol, ErrRaiser):
                 sreq.replaceIndicator == 0):
                 self.raise_err (21, sreq.resultSetName, eb)
             searcher = self.get_searcher (sreq.databaseNames, eb)
-            if searcher <> None:
+            if searcher != None:
                 searcher.search (sreq.query, cb, eb)
         except zoom.Bib1Err, e:
             pass
@@ -176,7 +176,7 @@ class Z3950Server(protocol.Protocol, ErrRaiser):
     def get_searcher (self, dbnames, eb):
         """Override this to support multiple-db searches by creating
         an appropriate multiplexing searcher."""
-        if len (dbnames) <> 1:
+        if len (dbnames) != 1:
             self.raise_err (111, str (dbnames), eb)
             return None
         searcher = self.searcher.get (dbnames[0], None)
@@ -230,7 +230,7 @@ class Z3950Server(protocol.Protocol, ErrRaiser):
                 self.next ()
             def next (self, rec = None):
                 self.count = self.count + 1
-                if rec <> None:
+                if rec != None:
                     self.recs.append (rec)
                 if self.count == self.rec_end:
                     self.finish ()
