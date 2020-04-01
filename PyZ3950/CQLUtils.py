@@ -1,147 +1,157 @@
 
 """CQL utility functions and subclasses"""
 
-from CQLParser import *
-from types import ListType, IntType
-from SRWDiagnostics import *
+from .CQLParser import *
+from .SRWDiagnostics import *
 
 from PyZ3950 import z3950, asn1, oids
 from PyZ3950.zdefs import make_attr
 
-asn1.register_oid (oids.Z3950_QUERY_CQL, asn1.GeneralString)
+asn1.register_oid(oids.Z3950_QUERY_CQL, asn1.GeneralString)
 
 class ZCQLConfig:
 
-    contextSets = {'dc' : 'info:srw/cql-context-set/1/dc-v1.1',
-                   'cql' : 'info:srw/cql-context-set/1/cql-v1.1',
-                   'bath' : 'http://zing.z3950.org/cql/bath/2.0/',
-                   'zthes' : 'http://zthes.z3950.org/cql/1.0/', 
-                   'ccg' : 'http://srw.cheshire3.org/contextSets/ccg/1.1/ ',
-                   'rec' : 'info:srw/cql-context-set/2/rec-1.0',
-                   'net' : 'info:srw/cql-context-set/2/net-1.0'}
+    contextSets = {
+        'dc': 'info:srw/cql-context-set/1/dc-v1.1',
+        'cql': 'info:srw/cql-context-set/1/cql-v1.1',
+        'bath': 'http://zing.z3950.org/cql/bath/2.0/',
+        'zthes': 'http://zthes.z3950.org/cql/1.0/', 
+        'ccg': 'http://srw.cheshire3.org/contextSets/ccg/1.1/ ',
+        'rec': 'info:srw/cql-context-set/2/rec-1.0',
+        'net': 'info:srw/cql-context-set/2/net-1.0',
+    }
 
-    dc = {'title' : 4,
-          'subject' : 21,
-          'creator' : 1003,
-          'author' : 1003,
-          'editor' : 1020,
-          'contributor' : 1018,
-          'publisher' : 1018,
-          'description' : 62,
-          'date' : 30,
-          'resourceType' : 1031,
-          'type' : 1031,
-          'format' : 1034,
-          'identifier' : 12,
-          'source' : 1019,
-          'language' : 54,
-          'relation' : 1016,
-          'coverage' : 1016,
-          'rights' : 1016
-          }
+    dc = {
+        'title': 4,
+        'subject': 21,
+        'creator': 1003,
+        'author': 1003,
+        'editor': 1020,
+        'contributor': 1018,
+        'publisher': 1018,
+        'description': 62,
+        'date': 30,
+        'resourceType': 1031,
+        'type': 1031,
+        'format': 1034,
+        'identifier': 12,
+        'source': 1019,
+        'language': 54,
+        'relation': 1016,
+        'coverage': 1016,
+        'rights': 1016,
+    }
 
-    cql = {'anywhere' : 1016,
-           'serverChoice' : 1016}
+    cql = {
+        'anywhere': 1016,
+        'serverChoice': 1016,
+    }
 
     # The common bib1 points
-    bib1 = {"personal_name" : 1,
-            "corporate_name" : 2,
-            "conference_name" : 3,
-            "title" : 4,
-            "title_series" : 5,
-            "title_uniform" : 6,
-            "isbn" : 7,
-            "issn" : 8,
-            "lccn" : 9,
-            "local_number" : 12,
-            "dewey_number" : 13,
-            "lccn" : 16,
-            "local_classification" : 20,
-            "subject" : 21,
-            "subject_lc" : 27,
-            "subject_local" : 29,
-            "date" : 30,
-            "date_publication" : 31,
-            "date_acquisition" : 32,
-            "local_call_number" : 53,
-            "abstract" : 62,
-            "note" : 63,
-            "record_type" : 1001,
-            "name" : 1002,
-            "author" : 1003,
-            "author_personal" : 1004,
-            "identifier" : 1007,
-            "text_body" : 1010,
-            "date_modified" : 1012,
-            "date_added" : 1011,
-            "concept_text" : 1014,
-            "any" : 1016,
-            "default" : 1017,
-            "publisher" : 1018,
-            "record_source" : 1019,
-            "editor" : 1020,
-            "docid" : 1032,
-            "anywhere" : 1035,
-            "sici" : 1037
-            }
+    bib1 = {
+        "personal_name": 1,
+        "corporate_name": 2,
+        "conference_name": 3,
+        "title": 4,
+        "title_series": 5,
+        "title_uniform": 6,
+        "isbn": 7,
+        "issn": 8,
+        "lccn": 9,
+        "local_number": 12,
+        "dewey_number": 13,
+        "lccn": 16,
+        "local_classification": 20,
+        "subject": 21,
+        "subject_lc": 27,
+        "subject_local": 29,
+        "date": 30,
+        "date_publication": 31,
+        "date_acquisition": 32,
+        "local_call_number": 53,
+        "abstract": 62,
+        "note": 63,
+        "record_type": 1001,
+        "name": 1002,
+        "author": 1003,
+        "author_personal": 1004,
+        "identifier": 1007,
+        "text_body": 1010,
+        "date_modified": 1012,
+        "date_added": 1011,
+        "concept_text": 1014,
+        "any": 1016,
+        "default": 1017,
+        "publisher": 1018,
+        "record_source": 1019,
+        "editor": 1020,
+        "docid": 1032,
+        "anywhere": 1035,
+        "sici": 1037,
+    }
 
-    exp1 = {"explainCategory" :1,
-            "humanStringLanguage" : 2,
-            "databaseName" : 3,
-            "serverName" : 4,
-            "attributeSetOID" : 5,
-            "recordSyntaxOID" : 6,
-            "tagSetOID" : 7,
-            "extendedServiceOID" : 8,
-            "dateAdded" : 9,
-            "dateChanged" : 10,
-            "dateExpires" : 11,
-            "elementSetName" : 12,
-            "processingContext" : 13,
-            "processingName" : 14,
-            "termListName" : 15,
-            "schemaOID" : 16,
-            "producer" : 17,
-            "supplier" : 18,
-            "availability" : 19,
-            "proprietary" : 20,
-            "userFee" : 21,
-            "variantSetOID" : 22,
-            "unitSystem" : 23,
-            "keyword" : 24,
-            "explainDatabase" : 25,
-            "processingOID" : 26
-            }
+    exp1 = {
+        "explainCategory" :1,
+        "humanStringLanguage": 2,
+        "databaseName": 3,
+        "serverName": 4,
+        "attributeSetOID": 5,
+        "recordSyntaxOID": 6,
+        "tagSetOID": 7,
+        "extendedServiceOID": 8,
+        "dateAdded": 9,
+        "dateChanged": 10,
+        "dateExpires": 11,
+        "elementSetName": 12,
+        "processingContext": 13,
+        "processingName": 14,
+        "termListName": 15,
+        "schemaOID": 16,
+        "producer": 17,
+        "supplier": 18,
+        "availability": 19,
+        "proprietary": 20,
+        "userFee": 21,
+        "variantSetOID": 22,
+        "unitSystem": 23,
+        "keyword": 24,
+        "explainDatabase": 25,
+        "processingOID": 26,
+    }
   
-    xd1 = {"title" : 1,
-          "subject" : 2,
-          "name" : 3,
-          "description" : 4,
-          "date" : 5,
-          "type" : 6,
-          "format" : 7,
-          "identifier" : 8,
-          "source" : 9,
-          "langauge" : 10,
-          "relation" : 11,
-          "coverage" : 12,
-          "rights" : 13}
+    xd1 = {
+        "title": 1,
+        "subject": 2,
+        "name": 3,
+        "description": 4,
+        "date": 5,
+        "type": 6,
+        "format": 7,
+        "identifier": 8,
+        "source": 9,
+        "langauge": 10,
+        "relation": 11,
+        "coverage": 12,
+        "rights": 13,
+    }
 
-    util = {"record_date" : 1,
-            "record_agent" : 2,
-            "record_language" : 3,
-            "control_number" : 4,
-            "cost" : 5,
-            "record_syntax" : 6,
-            "database_schema" : 7,
-            "score" : 8,
-            "rank" : 9,
-            "result_set_position" : 10,
-            "all" : 11,
-            "anywhere" : 12,
-            "server_choice" : 13,
-            "wildcard" : 14,
-            "wildpath" : 15}
+    util = {
+        "record_date": 1,
+        "record_agent": 2,
+        "record_language": 3,
+        "control_number": 4,
+        "cost": 5,
+        "record_syntax": 6,
+        "database_schema": 7,
+        "score": 8,
+        "rank": 9,
+        "result_set_position": 10,
+        "all": 11,
+        "anywhere": 12,
+        "server_choice": 13,
+        "wildcard": 14,
+        "wildpath": 15,
+    }
 
     defaultAttrSet = z3950.Z3950_ATTRS_BIB1_ov
 
@@ -167,12 +177,12 @@ class ZCQLConfig:
         if (not isinstance(use, int)):
             index = indexType(use)
         else:
-            for v in self.dc.items():
+            for v in list(self.dc.items()):
                 if use == v[1]:
                     index = indexType("dc.%s" % (v[0]))
                     break
             if not index:
-                for v in self.bib1.items():
+                for v in list(self.bib1.items()):
                     if (use == v[1]):
                         index = indexType("bib1.%s" % (v[0]))
                         break
@@ -285,26 +295,28 @@ def rpn2cql(rpn, config=zConfig, attrSet=None):
 class CSearchClause(SearchClause):
 
     def convertMetachars(self, t):
-        "Convert SRW meta characters in to Cheshire's meta characters"
+        """
+        Convert SRW meta characters in to Cheshire's meta characters
+        """
         # Fail on ?, ^ or * not at the end.
-        if (count(t, "?") != count(t, "\\?")):
+        if (t.count("?") != t.count("\\?")):
             diag = Diagnostic28()
             diag.details = "? Unsupported"
             raise diag
-        elif (count(t, "^") != count(t, "\\^")):
+        elif (t.count("^") != t.count("\\^")):
             diag = Diagnostic31()
             diag.details = "^ Unsupported"
             raise diag
-        elif (count(t, "*") != count(t, "\\*")):
+        elif (t.count("*") != t.count("\\*")):
             if t[-1] != "*" or t[-2] == "\\":
                 diag = Diagnostic28()
                 diag.details = "Non trailing * unsupported"
                 raise diag
             else:
                 t[-1] = "#"
-        t = replace(t, "\\^", "^")
-        t = replace(t, "\\?", "?")
-        t = replace(t, "\\*", "*")
+        t = t.replace("\\^", "^")
+        t = t.replace("\\?", "?")
+        t = t.replace("\\*", "*")
         return t
 
     def toRPN(self, top=None):
@@ -347,7 +359,7 @@ class CSearchClause(SearchClause):
             relattrs = self.relation.toRPN(top)
             attrs.update(relattrs)
             butes =[]
-            for e in attrs.iteritems():
+            for e in attrs.items():
                 butes.append((e[0][0], e[0][1], e[1]))
 
             clause.attributes = [make_attr(*e) for e in butes]
@@ -399,7 +411,9 @@ class CBoolean(Boolean):
 class CTriple(Triple):
 
     def toRPN(self, top=None):
-        """rpnRpnOp"""
+        """
+        rpnRpnOp
+        """
         if not top:
             top = self
 
@@ -445,7 +459,8 @@ class CIndex(Index):
                     # Need to map from this list to RPN list
                     attrs = {}
                     for i in idx:
-                        set = asn1.OidVal(map(int, i[0].split('.')))
+                        # TODO: Scrub reserved words from variable names
+                        set = asn1.OidVal(list(map(int, i[0].split('.'))))
                         type = int(i[1])
                         if (i[2].isdigit()):
                             val = int(i[2])
