@@ -12,7 +12,7 @@ from xml.sax.saxutils import escape
 from xml.dom.minidom import Node, parseString
 from PyZ3950.SRWDiagnostics import *
 # Don't use cStringIO as it borks Unicode (apparently)
-from StringIO import StringIO
+from io import StringIO
 import types
 
 # Parsing strictness flags
@@ -51,7 +51,7 @@ class PrefixableObject:
         # Just generate our prefixes
         space = "  " * depth
         xml = ['%s<prefixes>\n' % (space)]
-        for p in self.prefixes.keys():
+        for p in list(self.prefixes.keys()):
             xml.append("%s  <prefix>\n%s    <name>%s</name>\n%s    <identifier>%s</identifier>\n%s  </prefix>\n" % (space, space, escape(p), space, escape(self.prefixes[p]), space))
         xml.append("%s</prefixes>\n" % (space))
         return ''.join(xml)
@@ -62,7 +62,7 @@ class PrefixableObject:
             # Maybe error
             diag = Diagnostic45()
             diag.details = name
-            raise diag;
+            raise diag
         self.prefixes[name] = identifier
 
     def resolvePrefix(self, name):
@@ -136,7 +136,7 @@ class ModifiableObject:
     modifiers = []
 
     def __getitem__(self, k):
-        if (type(k) == types.IntType):
+        if (type(k) == int):
             try:
                 return self.modifiers[k]
             except:
@@ -176,7 +176,7 @@ class Triple (PrefixableObject):
     def toCQL(self):
         txt = []
         if (self.prefixes):
-            for p in self.prefixes.keys():
+            for p in list(self.prefixes.keys()):
                 if (p != ''):
                     txt.append('>%s="%s"' % (p, self.prefixes[p]))
                 else:
@@ -252,7 +252,7 @@ class SearchClause (PrefixableObject):
 
     def toCQL(self):
         text = []
-        for p in self.prefixes.keys():
+        for p in list(self.prefixes.keys()):
             if (p != ''):
                 text.append('>%s="%s"' % (p, self.prefixes[p]))
             else:
@@ -311,7 +311,7 @@ class Relation(PrefixedObject, ModifiableObject):
 
     def toCQL(self):
         txt = [self.value]
-        txt.extend(map(str, self.modifiers))
+        txt.extend(list(map(str, self.modifiers)))
         return '/'.join(txt)
 
 class Term:
@@ -453,7 +453,7 @@ class CQLshlex(shlex):
     def __init__(self, thing):
         shlex.__init__(self, thing)
         self.wordchars += "!@#$%^&*-+{}[];,.?|~`:\\"
-        self.wordchars += ''.join(map(chr, range(128,254)))
+        self.wordchars += ''.join(map(chr, list(range(128,254))))
 
     def read_token(self):
         "Read a token from the input stream (no pushback or inclusions)"
@@ -471,7 +471,7 @@ class CQLshlex(shlex):
             if nextchar == '\n':
                 self.lineno = self.lineno + 1
             if self.debug >= 3:
-                print("shlex: in state ", repr(self.state),  " I see character:", repr(nextchar))
+                print("shlex: in state {0} I see character: {1}".format(repr(self.state), repr(nextchar)))
 
             if self.state is None:
                 self.token = ''        # past end of file
@@ -582,7 +582,7 @@ class CQLshlex(shlex):
         self.token = ''
         if self.debug > 1:
             if result:
-                print("shlex: raw token=" + `result`)
+                print("shlex: raw token={0}".format(repr(result)))
             else:
                 print("shlex: raw token=EOF")
         return result
@@ -662,7 +662,7 @@ class CQLParser:
             else:
                 break;
 
-        for p in prefs.keys():
+        for p in list(prefs.keys()):
             left.addPrefix(p, prefs[p])
         return left
 
@@ -681,7 +681,7 @@ class CQLParser:
             prefs = self.prefixes()
             if (prefs):
                 object = self.query()
-                for p in prefs.keys():
+                for p in list(prefs.keys()):
                     object.addPrefix(p, prefs[p])
             else:
                 object = self.clause()
@@ -713,7 +713,7 @@ class CQLParser:
             prefs = self.prefixes()
             # iterate to get object
             object = self.clause()
-            for p in prefs.keys():
+            for p in list(prefs.keys()):
                 object.addPrefix(p, prefs[p]);
             return object
             
@@ -808,7 +808,7 @@ class XCQLParser:
                 elif c.localName == "prefixes":
                     sc.prefixes = self.prefixes(c)
                 else:
-                    raise(ValueError, c.localName)
+                    raise ValueError(c.localName)
         return sc
 
     def triple(self, elem):
@@ -854,7 +854,9 @@ class XCQLParser:
         return rel
 
     def boolean(self, elem):
-        "Process a <boolean>"
+        """
+        Process a <boolean>
+        """
         bool = booleanType()
         for c in elem.childNodes:
             if c.nodeType == Node.ELEMENT_NODE:
@@ -886,7 +888,9 @@ class XCQLParser:
         return bool
         
     def prefixes(self, elem):
-        "Process <prefixes>"
+        """
+        Process <prefixes>
+        """
         prefs = {}
         for c in elem.childNodes:
             if c.nodeType == Node.ELEMENT_NODE:
@@ -926,7 +930,7 @@ def parse(query):
 
     try:
         query = query.encode("utf-8")
-    except Exception, e:
+    except Exception as e:
         diag = Diagnostic10()
         diag.details = "Cannot parse non utf-8 characters"
         raise diag
@@ -957,7 +961,7 @@ indexType = Index
 termType = Term
 
 try:
-    from CQLUtils import *
+    from .CQLUtils import *
     tripleType = CTriple
     booleanType = CBoolean
     relationType = CRelation
@@ -973,16 +977,16 @@ except:
 
 
 if (__name__ == "__main__"):
-    import sys;
+    import sys
     s = sys.stdin.readline()
     try:
-        q = parse(s);
-    except SRWDiagnostic, diag:
+        q = parse(s)
+    except SRWDiagnostic as diag:
         # Print a full version, not just str()
         print("Diagnostic Generated.")
-        print("  Code:        " + str(diag.code))
-        print("  Details:     " + str(diag.details))
-        print("  Message:     " + str(diag.message))
+        print("  Code:        {0}".format(diag.code))
+        print("  Details:     {0}".format(diag.details))
+        print("  Message:     {0}".format(diag.message))
     else:
         print(q.toXCQL()[:-1])
     
