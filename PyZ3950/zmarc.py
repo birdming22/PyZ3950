@@ -36,7 +36,6 @@ which takes binary MARC data.
 # of the copyright holder.
 
 import sys
-import string
 
 from xml.sax.saxutils import escape
 
@@ -119,7 +118,7 @@ subfieldHash = {'1' : "one", '2' : "two", '3' : "three", '4' : "four", '5' : "fi
 # Library of Congress, section 650 p. 5, page printed Dec 1991, looseleaf
 # binder issued in 1988.
 
-def parse_sub (field):
+def parse_sub(field):
     if len (field) < 4:
         if field == '  ':
             # Is this legit?  I've seen it, so handle correctly.
@@ -128,16 +127,16 @@ def parse_sub (field):
         return None
 
     if field [2] != sep:
-        print("Bad field [2]", repr (field[2]))
+        print("Bad field [2] {0}".format(repr(field[2])))
         return None
     ind1 = field[0]
     ind2 = field[1]
     sublist = []
-    splitlist = string.split (field[2:], sep)
+    splitlist = field[2:].split(sep)
     for sub in splitlist:
         if (sub == ''): # we begin w/ sep, so there's an empty prefix
             continue
-        sublist.append ((sub[0], string.strip(sub[1:])))
+        sublist.append((sub[0], sub[1:].strip()))
     return (ind1, ind2, sublist)
     
 class MARC:
@@ -197,7 +196,7 @@ class MARC:
             else:
                 pass # happens for same record as above.
 #                print("Weird, no hex 1E for", tag, repr(line))
-            field = string.atoi (tag)
+            field = int(tag)
             if is_fixed (field):
                 self.fields[field] = [line]
                 # 1-elt list for orthogonality of processing
@@ -210,7 +209,7 @@ class MARC:
         self.ok = 1
         # XXX should do more error-checking
     def __str__ (self):
-        k = self.fields.keys ()
+        k = list(self.fields.keys())
         k.sort ()
         lst = []
         for field in k:
@@ -225,7 +224,7 @@ class MARC:
             for l in f:
                 def fmt (x):
                     return '$%s%s' % (x[0], x[1])
-                sl = map (fmt, l[2])
+                sl = list(map(fmt, l[2]))
                 str_l.append (str(k) + " " + l[0] + l[1] + " ".join (sl))
             return "\n".join (str_l)
     def extract_int (self, start, end):
@@ -233,7 +232,7 @@ class MARC:
         if bit.isspace():
             return 0
         try:
-            return string.atoi (bit)
+            return int(bit)
         except:
             raise MarcError("Un-intable string: %r in %r" % (bit, self.marc))
         
@@ -251,7 +250,7 @@ class MARC:
         # later - 0-4 log. record length, 12-16 base addr of data
         # directory: 3 of tag, 4 of field len, 5 of starting pos (rel.
         # to base address of data, 12-16
-        fields = self.fields.keys ()
+        fields = list(self.fields.keys())
         data = ''
         directory = ''
         for field in fields:
@@ -262,24 +261,24 @@ class MARC:
                 if is_fixed (field):
                     data += fielddat
                 else:
-                    sublist = (fielddat [0] + fielddat [1] +
-                               "".join (map (lambda s: sep + s[0] + s[1],
-                                             fielddat[2])))
+                    sublist = (fielddat[0] + fielddat[1] +
+                               "".join([sep + s[0] + s[1] for s in fielddat[2]]))
                     data += sublist
                 data += fieldsep # XXX is this right?
 
                 length = len (data) - start
                 directory += "%.03d%.04d%.05d" % (field, length, start)
-        def id (x): return x
+        def _id(x):
+            return x
         data += fieldsep + recsep
-        hdrlist [0:5] = map (id, "%.05d" % (len (hdrlist) + len (directory) +
-                                   len (data),))
-        hdrlist [12:17] = map (id,"%.05d" % (len (hdrlist) + len (directory),))
+        hdrlist[0:5] = list(map(_id, "%.05d" % (len(hdrlist) + len(directory) +
+                                   len(data),)))
+        hdrlist[12:17] = list(map(_id,"%.05d" % (len(hdrlist) + len(directory),)))
         return "".join (hdrlist) + directory + data
 
     def toMARCXML(self):
         " Convert record to MarcXML Schema "
-        keys = self.fields.keys()
+        keys = list(self.fields.keys())
         keys.sort()
 
 
@@ -310,7 +309,7 @@ class MARC:
         """Convert record to OAI MARC XML Schema.
         Note Well that OAI-MHP 2.0 recommends using MarcXML"""
         
-        keys = self.fields.keys()
+        keys = list(self.fields.keys())
         keys.sort()
         marc = self.get_MARC()
 
@@ -362,7 +361,7 @@ class MARC:
     def toSGML(self):
         """ Convert record to USMARC SGML """
 
-        keys = self.fields.keys()
+        keys = list(self.fields.keys())
         keys.sort()
 
         # Extract field ranges
@@ -715,7 +714,7 @@ class MARC:
         # Creator -> 100,110,111, 700,710,711
         authorKeyTypes = {100 : 'personal',  110 : 'corporate', 111 : 'conference', 700 : 'personal', 710 : 'corporate',  711 : 'conference'}
 
-        for k in authorKeyTypes.keys():
+        for k in list(authorKeyTypes.keys()):
             if k in self.fields:
                 for instance in self.fields[k]:
                     subf = {}
@@ -923,6 +922,7 @@ class MARC:
         # XXX TargetAudience (field 8 again)
 
         # --- Note ---
+        # TODO: Test and address the duplicate key issue in this dictionary
         notes_to_typ = { # http://www.loc.gov/standards/mods/mods-notes.html
             500 : None,
             541 : 'acquisition',
@@ -939,7 +939,7 @@ class MARC:
             511 : 'performers',
             518 : 'venue'} # and 
             
-        for field, typ in notes_to_typ.items ():
+        for field, typ in list(notes_to_typ.items()):
             if (field in self.fields):
                 for n in self.fields[field]:
                     if typ == None:
@@ -1189,14 +1189,14 @@ class MARC8_to_Unicode:
     
     basic_latin = 0x42
     ansel = 0x45
-    def __init__ (self, G0 = basic_latin, G1 = ansel):
+    def __init__(self, G0 = basic_latin, G1 = ansel):
         self.g0 = G0
         self.g1 = G1
 
-    def is_multibyte (self, charset):
+    def is_multibyte(self, charset):
         return charset == 0x31
         
-    def translate (self, s):
+    def translate(self, s):
         uni_list = []
         combinings = []
         pos = 0
@@ -1212,20 +1212,20 @@ class MARC8_to_Unicode:
                     # XXX or ')', '-', 1-char or '$)', '$-' for G1
                     pos = pos + 4
                     continue
-            mb_flag = self.is_multibyte (self.g0)
+            mb_flag = self.is_multibyte(self.g0)
                 
             if mb_flag:
-                d = (ord (s[pos]) * 65536 +
-                     ord (s[pos+1]) * 256 +
-                     ord (s[pos+2]))
+                d = (ord(s[pos]) * 65536 +
+                     ord(s[pos+1]) * 256 +
+                     ord(s[pos+2]))
                 pos += 3
             else:
-                d = ord (s[pos])
+                d = ord(s[pos])
                 pos += 1
                 
             if (d < 0x20 or
                 (d > 0x80 and d < 0xa0)):
-                uni = unichr (d)
+                uni = chr(d)
                 continue
             
             if d > 0x80 and not mb_flag:
@@ -1234,14 +1234,14 @@ class MARC8_to_Unicode:
                 (uni, cflag) = marc_to_unicode.codesets [self.g0] [d]
                 
             if cflag:
-                combinings.append (unichr (uni))
+                combinings.append(chr(uni))
             else:
-                uni_list.append (unichr (uni))
+                uni_list.append(chr(uni))
                 if len (combinings) > 0:
                     uni_list += combinings
                     combinings = []
         # what to do if combining chars left over?
-        uni_str = u"".join (uni_list)
+        uni_str = "".join(uni_list)
         
         # unicodedata.normalize not available until Python 2.3        
         if hasattr (unicodedata, 'normalize'):
@@ -1253,9 +1253,9 @@ def test_convert (s, enc):
     conv = MARC8_to_Unicode ()
     converted = conv.translate (s)
     converted = unicodedata.normalize ('NFC', converted)
-    print(converted.encode (enc))
+    print(converted.encode(enc))
 
-    print(repr (converted))
+    print(repr(converted))
 
         
 
@@ -1272,22 +1272,22 @@ if __name__ == '__main__':
 
     for f in sys.argv[1:]:
         marc_file = open(f, 'rb')
-        marc_text = marc_file.read ()
+        marc_text = marc_file.read()
         while 1:
             marc_data1 = MARC(marc_text)
-            print(str (marc_data1))
-            new = marc_data1.get_MARC ()
-            marc_data2 = MARC (marc_text)
-            k1 = marc_data1.fields.keys ()
-            k2 = marc_data2.fields.keys ()
+            print(str(marc_data1))
+            new = marc_data1.get_MARC()
+            marc_data2 = MARC(marc_text)
+            k1 = list(marc_data1.fields.keys())
+            k2 = list(marc_data2.fields.keys())
             assert (k1 == k2)
             for field in k1:
-                same = (marc_data1.fields [field] ==
-                        marc_data2.fields [field])
-                assert (same)
+                same = (marc_data1.fields[field] ==
+                        marc_data2.fields[field])
+                assert same
             marc_text = marc_text[marc_data1.reclen:]
-            if len (marc_text) == 0:
+            if len(marc_text) == 0:
                 break
-        marc_file.close ()
+        marc_file.close()
 
 
