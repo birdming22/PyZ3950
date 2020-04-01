@@ -72,7 +72,7 @@ def ParseRecord(sMARCfilename):
         #700 additional personal name entry
         
         for fieldno in names_fields: #show raw zmarc structure
-            if not vMARC.fields.has_key (fieldno):
+            if fieldno not in vMARC.fields:
                 continue
             
             print("Raw zmarc structure, field %d: %s" %  (

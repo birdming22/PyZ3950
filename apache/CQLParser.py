@@ -48,7 +48,8 @@ def convertIndex(sc, top):
         set = ""
 
     # Look for set in prefixes
-    if top.prefixes.has_key(set):
+    # TODO: Scrub reserved words from variable names
+    if set in top.prefixes:
         setURI = top.prefixes[set]
         for v in config.indexSetNamespaces.keys():
             if config.indexSetNamespaces[v] == setURI:
@@ -56,7 +57,7 @@ def convertIndex(sc, top):
                 break
     elif not set:
         set = config.defaultIndexSet
-    elif not config.indexSetNamespaces.has_key(set):
+    elif set not in config.indexSetNamespaces:
         # Unknown index set
         diag = Diagnostic15()
         diag.details = set
@@ -64,14 +65,14 @@ def convertIndex(sc, top):
 
     # We may have reassigned to srw based on prefixes, hence this goes here.
     # eg > foo="http://www.loc.gov/zing/srw/srw-indexes/v1.0/ foo.serverchoice
-    if set =="srw" and idx == "serverchoice":
+    if set == "srw" and idx == "serverchoice":
             idx = config.defaultIndex
             set = config.defaultIndexSet
 
     if set =="srw" and idx == "resultsetname":
         return ":"
 
-    if config.indexHash.has_key(set) and config.indexHash[set].has_key(idx):
+    if (set in config.indexHash) and (idx in config.indexHash[set]):
         idx = config.indexHash[set][idx]
 
     if type(idx) == ListType:
@@ -269,7 +270,7 @@ class PrefixableObject:
     "Root object for triple and searchClause"
     prefixes = {}
     def addPrefix(self, name, identifier):
-        if (self.prefixes.has_key(name) or reservedPrefixes.has_key(name)):
+        if (name in self.prefixes or name in reservedPrefixes):
             # Error condition
             diag = Diagnostic45()
             raise diag;
@@ -533,7 +534,7 @@ class SearchClause (PrefixableObject):
             set = ""
 
         # Look for set in prefixes
-        if top.prefixes.has_key(set):
+        if set in top.prefixes:
             setURI = top.prefixes[set]
             # Translate to local short form
             for v in config.indexSetNamespaces.keys():
@@ -542,7 +543,7 @@ class SearchClause (PrefixableObject):
                     break
         elif not set:
             set = config.defaultIndexSet
-        elif not config.indexSetNamespaces.has_key(set):
+        elif set not in config.indexSetNamespaces:
             # Unknown index set
             diag = Diagnostic15()
             diag.details = set
@@ -794,7 +795,7 @@ class CQLParser:
                 name = ""
                 identifier = self.currentToken
                 self.fetch_token()
-            if (prefs.has_key(name)):
+            if name in prefs:
                 # Error condition
                 diag = Diagnostic45()
                 diag.details = name
@@ -1110,7 +1111,7 @@ class XCQLParser:
 
                     modlist = []
                     for t in booleanModifierTypes[1:]:
-                        if mods.has_key(t):
+                        if t in mods:
                             modlist.append(mods[t])
                         else:
                             modlist.append('')

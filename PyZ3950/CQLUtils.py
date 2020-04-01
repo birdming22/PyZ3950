@@ -439,8 +439,8 @@ class CIndex(Index):
                 pf = cidx.prefix
                 index = cidx.value
 
-            if config.indexHash.has_key(pf):
-                if config.indexHash[pf].has_key(index):
+            if pf in config.indexHash:
+                if index in config.indexHash[pf]:
                     idx = config.indexHash[pf][index]
                     # Need to map from this list to RPN list
                     attrs = {}
@@ -465,11 +465,11 @@ class CIndex(Index):
                 raise diag
         elif (hasattr(zConfig, pf)):
             mp = getattr(zConfig, pf)
-            if (mp.has_key(self.value)):
+            if (self.value in mp):
                 val = mp[self.value]
             else:
                 val = self.value
-        elif (oids.oids['Z3950']['ATTRS'].has_key(pf.upper())):
+        elif (pf.upper() in oids.oids['Z3950']['ATTRS']):
             set = oids.oids['Z3950']['ATTRS'][pf.upper()]['oid']
             if (self.value.isdigit()):
                 # bib1.1018
@@ -487,6 +487,7 @@ class CIndex(Index):
 class CRelation(Relation):
     def toRPN(self, top):
         rels = ['', '<', '<=', '=', '>=', '>', '<>']
+        # TODO: Scrub reserved words from variable names
         set = z3950.Z3950_ATTRS_BIB1_ov
         vals = [None, None, None, None, None, None, None]
 

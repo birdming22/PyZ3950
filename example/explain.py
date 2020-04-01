@@ -33,7 +33,7 @@ class Explainer:
                      'extendedservicesinfo',
                      'elementsetdetails', 'retrievalrecorddetails',
                      'processinginfo', 'variantsetinfo', 'unitinfo']:
-            if self.categories.has_key (info):
+            if info in self.categories:
                 def report_unsupp ():
                     print("client does not support", info)
                 fn = getattr (self, 'run_' + info, lambda: report_unsupp ())

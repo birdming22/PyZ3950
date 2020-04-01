@@ -37,9 +37,9 @@ class Visitor:
         self.indent_lev -= 1
         assert (self.indent_lev >= 0)
     def register_assignment (self, ident, val, dependencies):
-        if self.assignments.has_key (ident):
+        if ident in self.assignments:
             raise "Duplicate assignment for " + ident
-        if self.defined_dict.has_key (ident):
+        if ident in self.defined_dict:
             raise "cross-module duplicates for " + ident
         self.defined_dict [ident] = 1
         self.assignments[ident] = val
@@ -56,11 +56,11 @@ class Visitor:
         while 1:
             any_output = 0
             for (ident, val) in self.assignments.iteritems ():
-                if already_output.has_key (ident):
+                if ident in already_output:
                     continue
                 ok = 1
                 for d in self.dependencies [ident]:
-                    if (not already_output.has_key (d) and
+                    if (d not in already_output and
                         d in assign_keys):
                         ok = 0
                 if ok:
@@ -77,7 +77,7 @@ class Visitor:
                 cycle_ident_list = []
                 cycle_list = []
                 for ident in self.assignments.iterkeys ():
-                    if not already_output.has_key (ident):
+                    if ident not in already_output:
                         text_list.append ('%s = asn1.Promise("%s")' %
                                           (ident, ident))
                         cycle_ident_list.append (ident)

@@ -596,7 +596,7 @@ def p_sequence_type (t):
         assert (len (t[3]) == 0)
         t[0] = Sequence (elt_list=[], ext_list = None)
     else:
-        if t[3].has_key('ext_list'):
+        if "ext_list" in t[3]:
             t[0] = Sequence (elt_list = t[3]['elt_list'], ext_list = t[3]['ext_list'])
         else:
             t[0] = Sequence (elt_list = t[3]['elt_list'], ext_list = None)
@@ -693,7 +693,7 @@ def p_setof_type (t):
 
 def p_choice_type (t):
     'choice_type : CHOICE LBRACE alternative_type_lists RBRACE'
-    if t[3].has_key('ext_list'):
+    if "ext_list" in t[3]:
         t[0] = Choice (elt_list = t[3]['elt_list'], ext_list = t[3]['ext_list'])
     else:
         t[0] = Choice (elt_list = t[3]['elt_list'], ext_list = None)

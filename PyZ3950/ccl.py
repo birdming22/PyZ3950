@@ -261,7 +261,7 @@ yacc.yacc (debug=0, tabmodule = 'PyZ3950_parsetab')
 
 def attrset_to_oid (attrset):
     l = attrset.lower ()
-    if _attrdict.has_key (l):
+    if l in _attrdict:
         return _attrdict [l]
     split_l = l.split ('.')
     if split_l[0] == '':

@@ -302,7 +302,7 @@ class Lexer:
                 
                 # Verify type of the token.  If not in the token map, raise an error
                 if not self.optimize:
-                    if not self.lextokens.has_key(newtok.type):
+                    if newtok.type not in self.lextokens:
                         raise LexError, ("%s:%d. Rule '%s' returned an unknown token type '%s'" % (
                             func.func_code.co_filename, func.func_code.co_firstlineno,
                             func.__name__, newtok.type),lexdata[lexpos:])
@@ -427,7 +427,7 @@ def lex(module=None,debug=0,optimize=0):
             if not is_identifier(n):
                 print("lex: Bad token name '%s'" % n)
                 error = 1
-            if lexer.lextokens.has_key(n):
+            if n in lexer.lextokens:
                 print("lex: Warning. Token '%s' multiply defined." % n)
             lexer.lextokens[n] = None
     else:
@@ -522,7 +522,7 @@ def lex(module=None,debug=0,optimize=0):
                 error = 1
                 continue
         
-            if not lexer.lextokens.has_key(name[2:]):
+            if name[2:] not in lexer.lextokens:
                 print("lex: Rule '%s' defined for an unspecified token %s." % (name,name[2:]))
                 error = 1
                 continue

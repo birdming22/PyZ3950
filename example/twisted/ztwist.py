@@ -163,7 +163,7 @@ class Z3950Server(protocol.Protocol, ErrRaiser):
 
             self.send_PDU ('searchResponse', sresp)
         try:
-            if (self.result_sets.has_key (sreq.resultSetName) and
+            if (sreq.resultSetName in self.result_sets and
                 sreq.replaceIndicator == 0):
                 self.raise_err (21, sreq.resultSetName, eb)
             searcher = self.get_searcher (sreq.databaseNames, eb)

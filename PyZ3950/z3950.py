@@ -265,8 +265,7 @@ class Server (Conn):
     def search_child (self, query):
         return range (random.randint (2,10))
     def search (self, sreq):
-        if sreq.replaceIndicator == 0 and self.result_sets.has_key (
-            sreq.resultSetName):
+        if (sreq.replaceIndicator == 0) and (sreq.resultSetName in self.result_sets):
             raise self.ProtocolError ("replaceIndicator 0")
         result = self.search_child (sreq.query)
         sresp = SearchResponse ()

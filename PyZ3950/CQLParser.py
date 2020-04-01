@@ -58,7 +58,7 @@ class PrefixableObject:
         
 
     def addPrefix(self, name, identifier):
-        if (errorOnDuplicatePrefix and (self.prefixes.has_key(name) or reservedPrefixes.has_key(name))):
+        if (errorOnDuplicatePrefix and (name in self.prefixes or name in reservedPrefixes)):
             # Maybe error
             diag = Diagnostic45()
             diag.details = name
@@ -67,9 +67,9 @@ class PrefixableObject:
 
     def resolvePrefix(self, name):
         # Climb tree
-        if (reservedPrefixes.has_key(name)):
+        if (name in reservedPrefixes):
             return reservedPrefixes[name]
-        elif (self.prefixes.has_key(name)):
+        elif (name in self.prefixes):
             return self.prefixes[name]
         elif (self.parent != None):
             return self.parent.resolvePrefix(name)
@@ -627,7 +627,7 @@ class CQLParser:
                 name = ""
                 identifier = self.currentToken
                 self.fetch_token()
-            if (errorOnDuplicatePrefix and prefs.has_key(name)):
+            if (errorOnDuplicatePrefix and name in prefs):
                 # Error condition
                 diag = Diagnostic45()
                 diag.details = name
@@ -878,7 +878,7 @@ class XCQLParser:
 
                     modlist = []
                     for t in booleanModifierTypes[1:]:
-                        if mods.has_key(t):
+                        if t in mods:
                             modlist.append(mods[t])
                         else:
                             modlist.append('')

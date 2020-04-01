@@ -590,7 +590,7 @@ def is_identifier(s):
 
 def add_production(f,file,line,prodname,syms):
     
-    if Terminals.has_key(prodname):
+    if prodname in Terminals:
         print("%s:%d. Illegal rule name '%s'. Already defined as a token." % (file,line,prodname))
         return -1
     if prodname == 'error':
@@ -608,7 +608,7 @@ def add_production(f,file,line,prodname,syms):
 
     # See if the rule is already in the rulemap
     map = "%s -> %s" % (prodname,syms)
-    if Prodmap.has_key(map):
+    if map in Prodmap:
         m = Prodmap[map]
         print("%s:%d. Duplicate rule %s." % (file,line, m))
         print("%s:%d. Previous definition at %s:%d" % (file,line, m.file, m.line))
@@ -625,7 +625,7 @@ def add_production(f,file,line,prodname,syms):
             
     Productions.append(p)
     Prodmap[map] = p
-    if not Nonterminals.has_key(prodname):
+    if prodname not in Nonterminals:
         Nonterminals[prodname] = [ ]
     
     # Add all terminals to Terminals
@@ -649,13 +649,13 @@ def add_production(f,file,line,prodname,syms):
             del p.prod[i]
             continue
 
-        if Terminals.has_key(t):
+        if t in Terminals:
             Terminals[t].append(p.number)
             # Is a terminal.  We'll assign a precedence to p based on this
             if not hasattr(p,"prec"):
                 p.prec = Precedence.get(t,('right',0))
         else:
-            if not Nonterminals.has_key(t):
+            if t not in Nonterminals:
                 Nonterminals[t] = [ ]
             Nonterminals[t].append(p.number)
         i += 1
@@ -831,7 +831,7 @@ def verify_productions(cycle_check=1):
             continue
         
         for s in p.prod:
-            if not Prodnames.has_key(s) and not Terminals.has_key(s) and s != 'error':
+            if (s not in Prodnames) and (s not in Terminals) and (s != 'error'):
                 print("%s:%d. Symbol '%s' used, but not defined as a token or a rule." % (p.file,p.line,s))
                 error = 1
                 continue
@@ -935,7 +935,7 @@ def add_precedence(plist):
                 print("yacc: Invalid precedence '%s'" % prec)
                 return -1
             for t in terms:
-                if Precedence.has_key(t):
+                if t in Precedence:
                     print("yacc: Precedence already specified for terminal '%s'" % t)
                     error += 1
                     continue
@@ -986,10 +986,10 @@ def first(x):
         if numempty == len(x):
             fst.append('<empty>')
 
-    elif Terminals.has_key(x):
+    elif x in Terminals:
         fst = [x]
 
-    elif Prodnames.has_key(x):
+    elif x in Prodnames:
         fst = [ ]
         prodlist = Prodnames[x]
         for p in prodlist:
@@ -1014,7 +1014,7 @@ def first(x):
                 for i in f:
                     if i not in fst: fst.append(i)
                 # If this rule doesn't produce empty, we're done
-                if not Prodempty.has_key(ps):
+                if ps not in Prodempty:
                     break
     else:
         raise YaccError, "first: %s not a terminal or nonterminal" % x
@@ -1042,7 +1042,7 @@ def compute_follow(start=None):
             # Here is the production set
             for i in range(len(p.prod)):
                 B = p.prod[i]
-                if Nonterminals.has_key(B):
+                if B in Nonterminals:
                     # Okay. We got a non-terminal in a production
                     fst = first(p.prod[i+1:])
                     hasempty = 0
@@ -1198,7 +1198,7 @@ def lr0_items():
         for x in asyms.keys():
             g = lr0_goto(I,x)
             if not g:  continue
-            if _lr0_cidhash.has_key(id(g)): continue
+            if id(g) in _lr0_cidhash: continue
             _lr0_cidhash[id(g)] = len(C)            
             C.append(g)
             
@@ -1295,7 +1295,7 @@ def slr_parse_table():
                 else:
                     i = p.lr_index
                     a = p.prod[i+1]       # Get symbol right after the "."
-                    if Terminals.has_key(a):
+                    if a in Terminals:
                         g = lr0_goto(I,a)
                         j = _lr0_cidhash.get(id(g),-1)
                         if j >= 0:
@@ -1341,12 +1341,12 @@ def slr_parse_table():
         # Print the actions associated with each terminal
         if yaccdebug:
           for a,p,m in actlist:
-            if action.has_key((st,a)):
+            if (st,a) in action:
                 if p is actionp[st,a]:
                     _vf.write("    %-15s %s\n" % (a,m))
           _vf.write("\n")
           for a,p,m in actlist:
-            if action.has_key((st,a)):
+            if (st,a) in action:
                 if p is not actionp[st,a]:
                     _vf.write("  ! %-15s [ %s ]\n" % (a,m))
             
@@ -1354,7 +1354,7 @@ def slr_parse_table():
         nkeys = { }
         for ii in I:
             for s in ii.usyms:
-                if Nonterminals.has_key(s):
+                if s in Nonterminals:
                     nkeys[s] = None
 
         # Construct the goto table for this state
@@ -1631,7 +1631,7 @@ def yacc(method=default_lr, debug=yaccdebug, module=None, tabmodule=tab_module, 
         raise YaccError,"Illegal token name"
 
     for n in tokens:
-        if Terminals.has_key(n):
+        if n in Terminals:
             print("yacc: Warning. Token '%s' multiply defined." % n)
         Terminals[n] = [ ]
 
@@ -1646,7 +1646,7 @@ def yacc(method=default_lr, debug=yaccdebug, module=None, tabmodule=tab_module, 
         Signature.update(repr(prec))
 
     for n in tokens:
-        if not Precedence.has_key(n):
+        if n not in Precedence:
             Precedence[n] = ('right',0)         # Default, right associative, 0 precedence
 
     # Look for error handler
@@ -1704,7 +1704,7 @@ def yacc(method=default_lr, debug=yaccdebug, module=None, tabmodule=tab_module, 
         # Validate dictionary
         validate_dict(ldict)
 
-        if start and not Prodnames.has_key(start):
+        if start and (start not in Prodnames):
             raise YaccError,"Bad starting symbol '%s'" % start
         
         augment_grammar(start)    

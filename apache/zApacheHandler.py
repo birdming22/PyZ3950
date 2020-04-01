@@ -71,8 +71,8 @@ class ZHandler:
                     
                     # Successfully decoded.
                     self.log("Received " + type);
-                    
-                    if (self.handlers.has_key(type)):
+                    # TODO: Scrub reserved words from variable names
+                    if (type in self.handlers):
                         resp = self.handlers[type](data)
                         self.connection.write(resp.tostring())
                         self.log("Sent response");

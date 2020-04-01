@@ -151,11 +151,11 @@ class C2Parser:
     def is_boolean(self, tok=None):
         if (tok == None):
             tok = self.currentToken
-        if (privateBooleans.has_key(tok.upper())):
+        if (tok.upper() in privateBooleans):
             return 1
-        elif (booleans.has_key(tok.upper())):
+        elif (tok.upper() in booleans):
             return 2
-        elif (proxBooleans.has_key(tok.upper())):
+        elif (tok.upper() in proxBooleans):
             return 3
         else:
             return 0
@@ -213,9 +213,9 @@ class C2Parser:
     def boolean(self):
         tok = self.currentToken.upper()
         self.fetch_token()
-        if (booleans.has_key(tok)):
+        if (tok in booleans):
             return (booleans[tok], None)
-        elif (privateBooleans.has_key(tok)):
+        elif (tok in privateBooleans):
             # Generate cutesie prox trick
             type = privateBooleans[tok]
             prox = z3950.ProximityOperator()
@@ -225,7 +225,7 @@ class C2Parser:
             prox.relationType = 3
             return ('op', ('prox', prox))
 
-        elif (proxBooleans.has_key(tok)):
+        elif (tok in proxBooleans):
             # Generate prox
             prox = z3950.ProximityOperator()
             stuff = proxBooleans[tok]
@@ -239,7 +239,7 @@ class C2Parser:
                 self.fetch_token()
                 if (self.currentToken.isdigit()):
                     prox.distance = int(self.currentToken)
-                elif (proxUnits.has_key(self.currentToken.upper())):
+                elif (self.currentToken.upper() in proxUnits):
                     prox.proximityUnitCode = ('known', proxUnits[self.currentToken.upper()])
                 else:
                     raise ValueError
@@ -267,7 +267,7 @@ class C2Parser:
                 if (self.currentToken == ']'):
                     break
 
-                if (oidHash.has_key(self.currentToken)):
+                if (self.currentToken in oidHash):
                     attrSet = oidHash[self.currentToken]['ov']
                     self.fetch_token()
                 elif (self.currentToken[:8] == '1.2.840.'):
@@ -338,7 +338,7 @@ class C2Parser:
 
         else:
             # Check for named index
-            if (zconfig.bib1.has_key(self.currentToken.lower())):
+            if (self.currentToken.lower() in zconfig.bib1):
                 attrs = [[oids.Z3950_ATTRS_BIB1_ov, 1, zconfig.bib1[self.currentToken.lower()]]]
             else:
                 # Just pass through the name
@@ -347,7 +347,7 @@ class C2Parser:
         self.fetch_token()
         # Check for relation
         tok = self.currentToken.upper()
-        if (relations.has_key(tok)):
+        if (tok in relations):
             val = relations[tok]
             found = 0
             for a in attrs:
@@ -358,7 +358,7 @@ class C2Parser:
             if (not found):
                 attrs.append([None, 2, val])
             self.fetch_token()
-        elif (geoRelations.has_key(tok)):
+        elif (tok in geoRelations):
             val = geoRelations[tok]
             found = 0
             for a in attrs:
