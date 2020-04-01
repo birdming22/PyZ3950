@@ -17,8 +17,8 @@ Handle TYPE-IDENTIFIER.&Type syntax, parametrized types.
 
 compiler hackery (support modules directly)
 
-
-
+- clean up all references to the string library (atoi, split, strip, etc.)
+- scrub reserved words from variable names (set, type, map, list, str, type, etc.)
 
 
 
