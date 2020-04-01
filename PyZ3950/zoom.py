@@ -55,7 +55,7 @@ API: let me know if that's wrong, and I'll try to do better.
 For some purposes (I think the only one is writing Z39.50 servers),
 you may want to use the functions in the z3950 module instead.  """
 
-from __future__ import nested_scopes    
+    
 
 __author__ = 'Aaron Lav (asl2@pobox.com)'
 __version__ = '1.0' # XXX
@@ -80,16 +80,16 @@ from PyZ3950 import oids
 # Azaroth 2003-12-04:
 from PyZ3950 import CQLParser, SRWDiagnostics, pqf
 from PyZ3950 import c2query as c2
-asn1.register_oid (oids.Z3950_QUERY_SQL, z3950.SQLQuery)
+asn1.register_oid(oids.Z3950_QUERY_SQL, z3950.SQLQuery)
 
 
-def my_enumerate (l): # replace w/ enumerate when we go to Python 2.3
-    return zip (range (len (l)), l)
+def my_enumerate(l): # replace w/ enumerate when we go to Python 2.3
+    return list(zip(list(range(len (l))), l))
 
 trace_extract = 0
 """trace extracting records from search/present reqs"""
 
-class ZoomError (Exception):
+class ZoomError(Exception):
     """Base class for all errors reported from this module"""
     pass
 
@@ -97,32 +97,32 @@ class ConnectionError(ZoomError):
     """Exception for TCP error"""
     pass
 
-class ClientNotImplError (ZoomError):
+class ClientNotImplError(ZoomError):
     """Exception for ZOOM client-side functionality not implemented (bug
        author)"""
     pass
 
-class ServerNotImplError (ZoomError):
+class ServerNotImplError(ZoomError):
     """Exception for function not implemented on server"""
     pass
 
-class QuerySyntaxError (ZoomError):
+class QuerySyntaxError(ZoomError):
     """Exception for query not parsable by client"""
     pass
 
-class ProtocolError (ZoomError):
+class ProtocolError(ZoomError):
     """Exception for malformatted server response"""
     pass
 
-class UnexpectedCloseError (ProtocolError):
+class UnexpectedCloseError(ProtocolError):
     """Exception for unexpected (z3950, not tcp) close from server"""
     pass
 
-class UnknownRecSyn (ZoomError):
+class UnknownRecSyn(ZoomError):
     """Exception for unknown record syntax returned from server"""
     pass
 
-class Bib1Err (ZoomError):
+class Bib1Err(ZoomError):
     """Exception for BIB-1 error"""
     def __init__ (self, condition, message, addtlInfo):
         self.condition = condition
@@ -153,13 +153,13 @@ class _ErrHdlr:
 _record_type_dict = {}
 """Map oid to renderer, field-counter, and field-getter functions"""
 
-def _oid_to_key (oid):
-    for (k,v) in _record_type_dict.items ():
+def _oid_to_key(oid):
+    for (k,v) in list(_record_type_dict.items()):
         if v.oid == oid:
             return k
     raise UnknownRecSyn (oid)
 
-def _extract_attrs (obj, attrlist):
+def _extract_attrs(obj, attrlist):
     kw = {}
     for key in attrlist:
         if hasattr (obj, key):
@@ -210,7 +210,7 @@ class Connection(_AttrCheck, _ErrHdlr):
         'responsePosition' : 'preferredPositionInResponse'
         }
 
-    attrlist = search_attrs + init_attrs + scan_zoom_to_z3950.keys () + [
+    attrlist = search_attrs + init_attrs + list(scan_zoom_to_z3950.keys()) + [
         'databaseName',
         'namedResultSets',
         'preferredRecordSyntax', # these three inheritable by RecordSet
@@ -221,7 +221,6 @@ class Connection(_AttrCheck, _ErrHdlr):
         'targetImplementationVersion',
         'host',
         'port',
-
         ] + _ErrHdlr.err_attrslist
 
     _queryTypes = ['S-CQL', 'S-CCL', 'RPN', 'ZSQL']
@@ -270,7 +269,7 @@ class Connection(_AttrCheck, _ErrHdlr):
         self.host = host
         self.port = port
         self._resultSetCtr = 0
-        for (k,v) in kw.items ():
+        for (k,v) in list(kw.items()):
             setattr (self, k, v)
         if (connect):
             self.connect()
@@ -345,7 +344,7 @@ class Connection(_AttrCheck, _ErrHdlr):
             self.connect()
         self._cli.set_dbnames ([self.databaseName])
         kw = {}
-        for k, xl in self.scan_zoom_to_z3950.items ():
+        for k, xl in list(self.scan_zoom_to_z3950.items()):
             if hasattr (self, k):
                 kw [xl] = getattr (self, k)
         return ScanSet (self._cli.scan (query.query, **kw))
@@ -438,7 +437,7 @@ class SortKey(_AttrCheck):
     sequence = ""
 
     def __init__ (self, **kw):
-        for k in kw.keys():
+        for k in list(kw.keys()):
             setattr(self, k, kw[k])
 
 class Query:
@@ -651,7 +650,7 @@ class ResultSet(_AttrCheck, _ErrHdlr):
     def _extract_recs (self, records, lbound):
         (typ, recs) = records
         if trace_extract:
-            print("Extracting", len (recs), "starting at", lbound)
+            print("Extracting {0} starting at {1}".format(len(recs), lbound))
         if typ == 'nonSurrogateDiagnostic':
             self.err (recs.condition, "", recs.diagnosticSetId)
         elif typ == 'multipleNonSurDiagnostics':
@@ -773,7 +772,7 @@ def render_OPAC (opac_data):
             def render (item, level = 1):
                 s_list = []
                 if isinstance (item, asn1.StructBase):
-                    for attr, val in item.__dict__.items ():
+                    for attr, val in list(item.__dict__.items()):
                         if attr [0] != '_':
                             s_list.append ("%s%s: %s" % (
                                 "\t" * level, attr, "\n".join(render (val, level + 1))))
@@ -880,7 +879,7 @@ class ScanSet (_AttrCheck, _ErrHdlr):
         present in the response.  (Like get_field, but for all fields.)"""
         r = self._get_rec (i)
         d = {}
-        for k,v in self.zoom_to_z3950.items ():
+        for k,v in list(self.zoom_to_z3950.items()):
             val = getattr (r, v, None)
             if val != None:
                 d[k] = val
@@ -940,7 +939,7 @@ if __name__ == '__main__':
             res = conn.search (query)
             for esn in esns:
                 for syn in fmts:
-                    print("Syntax", syn, "Esn", esn)
+                    print("Syntax {0} Esn {1}".format(syn, esn))
                     res.preferredRecordSyntax = syn
                     if esn != 'NONE':
                         res.elementSetName = esn
@@ -948,12 +947,12 @@ if __name__ == '__main__':
                         for r in res:
                             print(str(r))
                     except ZoomError as err:
-                        print("Zoom exception", err.__class__, err)
+                        print("Zoom exception {0} {1}".format(err.__class__, err))
 #           res.delete ()
 # Looks as if Oxford will close the connection if a delete is sent,
 # despite claiming delete support (verified with yaz client, too).
         except ZoomError as err:
-            print("Zoom exception", err.__class__, err)
+            print("Zoom exception {0} {1}".format(err.__class__, err))
 
                     
 
